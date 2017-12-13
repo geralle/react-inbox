@@ -1,0 +1,51 @@
+checkBox(id){
+  let newSelection = this.state.selected
+  if(newSelection.length > 0){
+    for(let i=0;i<newSelection.length;i++){
+      if(newSelection[i]===id){
+        newSelection.splice(i,1)
+      }else{
+        newSelection.push(id)
+      }
+    }
+  }else{
+    newSelection.push(id)
+  }
+
+  this.setState({selected: newSelection})
+  console.log(this.state.selected)
+}
+
+selectAll(){
+  let newData = this.props.data
+  let selectAll = this.props.selected
+  for(let i=0;i<this.props.data.length;i++){
+    if(!selectAll.includes(i)){
+      selectAll.push(i)
+    }
+    newData[i]['selected'] = true
+  }
+  this.setState({selected:selectAll})
+  this.setState({data:newData})
+}
+
+
+  selectAll(){
+    let selectAll = this.props.selected
+    for(let i=0;i<this.props.data.length;i++){
+      if(!selectAll.includes(i)){
+        selectAll.push(i)
+      }
+    }
+    this.setState({selected:selectAll})
+    console.log("selectedAll",this.props.selected)
+  }
+
+  deselectAll(){
+    let selectAll = this.props.selected
+    for(let i=0;i<this.props.data.length;i++){
+      selectAll.pop()
+    }
+    this.setState({selected:selectAll})
+    console.log("deselectAll",this.props.selected)
+  }
