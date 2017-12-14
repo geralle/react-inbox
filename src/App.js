@@ -90,8 +90,14 @@ class Inbox extends Component {
 
   checkBox(id){
     let newData = this.state.data
-    let position = id - 1
+    let position = 0
     let newSelection = this.state.selected
+    for(let i=0;i<newData.length;i++){
+      if(newData[i].id === id){
+        position = i
+      }
+    }
+
     if(!newSelection.includes(id)){
       newSelection.push(id)
       newData[position]['selected'] = true
@@ -225,6 +231,7 @@ class Inbox extends Component {
       }
     })
     this.getMessages()
+    this.setState({selected: []})
   }
 
   render() {
