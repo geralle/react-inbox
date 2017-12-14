@@ -17,6 +17,22 @@ class Inbox extends Component {
     }
   }
 
+  selected(){
+    if(this.props.selected === true){
+      return 'selected'
+    }else if(this.props.selected === false){
+      return ''
+    }
+  }
+
+  displayCheck(){
+    if(this.props.selected === true){
+      return 'check'
+    }else if(this.props.selected === false){
+      return ''
+    }
+  }
+
   addLabels(){
     return this.props.labels.map((label,index)=>{
       return <span className="label label-warning" key={index}>{label}</span>
@@ -25,11 +41,11 @@ class Inbox extends Component {
 
   render() {
     return (
-      <div className={"row message " + this.readUnread()}>
+      <div className={"row message " + this.readUnread() + ' ' + this.selected()}>
         <div className="col-xs-1">
           <div className="row">
             <div className="col-xs-2">
-              <input type="checkbox" onClick={() => this.props.checkBox(this.props.id)}/>
+              <input type="checkbox" checked={this.displayCheck()} onClick={() => this.props.checkBox(this.props.id)}/>
             </div>
             <div className="col-xs-2">
               <i className={"star fa " + this.displayStar()} onClick={() => this.props.toggleStar(this.props.id)}></i>

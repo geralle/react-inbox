@@ -6,8 +6,8 @@ class Messages extends Component {
   mapData(){
     return this.props.data.map((message,index) => {
       return <Message
-        selected={this.props.selected}
         message={message.subject}
+        selected={message.selected}
         starred={message.starred}
         read={message.read}
         labels={message.labels}
