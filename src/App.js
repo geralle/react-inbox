@@ -40,9 +40,60 @@ class Inbox extends Component {
     this.setState({data: newData})
   }
 
-  toggleStar(id){
-    let position = Number(id - 1)
+  findPosition(newData, id){
+    let position = 0
+    for(let i=0;i<newData.length;i++){
+      if(newData[i].id === id){
+        position = i
+      }
+    }
+    return position
+  }
+
+  checkBox(id){
     let newData = this.state.data
+    let newSelection = this.state.selected
+    let position = this.findPosition(newData, id)
+
+    if(!newSelection.includes(id)){
+      newSelection.push(id)
+      newData[position]['selected'] = true
+    }else{
+      let exists = newSelection.indexOf(id)
+      newSelection.splice(exists, 1)
+      newData[position]['selected'] = false
+    }
+    this.setState({data: newData})
+    this.setState({selected: newSelection})
+  }
+
+  selectAll(){
+    let newData = this.state.data
+    let selections = this.state.selected
+    for(let i=0;i<newData.length;i++){
+      let nextOne = newData[i].id
+      if(!selections.includes(nextOne)){
+        selections.push(nextOne)
+      }
+      newData[i]['selected'] = true
+    }
+    this.setState({selected:selections})
+    this.setState({data:newData})
+  }
+
+  deselectAll(){
+    let newData = this.state.data
+    let selections = this.state.selected
+    for(let i=0;i<newData.length;i++){
+      selections.pop()
+      newData[i]['selected'] = false
+    }
+    this.setState({selected:selections})
+  }
+
+  toggleStar(id){
+    let newData = this.state.data
+    let position = this.findPosition(newData, id)
     newData[position].starred = !newData[position].starred
     let payload = {
       "messageIds": [id],
@@ -86,52 +137,6 @@ class Inbox extends Component {
       "read": false
     }
     this.updateDB(payload, newData)
-  }
-
-  checkBox(id){
-    let newData = this.state.data
-    let position = 0
-    let newSelection = this.state.selected
-    for(let i=0;i<newData.length;i++){
-      if(newData[i].id === id){
-        position = i
-      }
-    }
-
-    if(!newSelection.includes(id)){
-      newSelection.push(id)
-      newData[position]['selected'] = true
-    }else{
-      let exists = newSelection.indexOf(id)
-      newSelection.splice(exists, 1)
-      newData[position]['selected'] = false
-    }
-    this.setState({data: newData})
-    this.setState({selected: newSelection})
-  }
-
-  selectAll(){
-    let newData = this.state.data
-    let selections = this.state.selected
-    for(let i=0;i<newData.length;i++){
-       let nextOne = i + 1
-      if(!selections.includes(nextOne)){
-        selections.push(nextOne)
-      }
-      newData[i]['selected'] = true
-    }
-    this.setState({selected:selections})
-    this.setState({data:newData})
-  }
-
-  deselectAll(){
-    let newData = this.state.data
-    let selections = this.state.selected
-    for(let i=0;i<newData.length;i++){
-      selections.pop()
-      newData[i]['selected'] = false
-    }
-    this.setState({selected:selections})
   }
 
   applyLabel(event){
