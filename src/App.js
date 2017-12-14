@@ -9,7 +9,8 @@ class Inbox extends Component {
     super();
     this.state = {
       data: [],
-      selected: []
+      selected: [],
+      compose: false
     }
   }
 
@@ -27,7 +28,7 @@ class Inbox extends Component {
     this.setState({data:newData})
   }
 
-  async updatePage(payload, newData){
+  async updateDB(payload, newData){
     const response = await fetch(url,{
       method: 'PATCH',
       body: JSON.stringify(payload),
@@ -48,7 +49,7 @@ class Inbox extends Component {
       "command": "star",
       "star": newData[position].starred
     }
-    this.updatePage(payload, newData)
+    this.updateDB(payload, newData)
   }
 
   markRead(){
@@ -66,7 +67,7 @@ class Inbox extends Component {
       "command": "read",
       "read": true
     }
-    this.updatePage(payload, newData)
+    this.updateDB(payload, newData)
   }
 
   markUnread(){
@@ -84,7 +85,7 @@ class Inbox extends Component {
       "command": "read",
       "read": false
     }
-    this.updatePage(payload, newData)
+    this.updateDB(payload, newData)
   }
 
   checkBox(id){
@@ -145,7 +146,7 @@ class Inbox extends Component {
       "command": "addLabel",
       "label": selectedLabel
     }
-    this.updatePage(payload, newData)
+    this.updateDB(payload, newData)
   }
 
   removeLabel(event){
@@ -168,22 +169,80 @@ class Inbox extends Component {
       "command": "removeLabel",
       "label": selectedLabel
     }
-    this.updatePage(payload, newData)
+    this.updateDB(payload, newData)
+  }
+
+  toggleCompose(){
+    let switchCompose = this.state.compose
+    if(switchCompose === false){
+      switchCompose = true
+    }else if(switchCompose === true){
+      switchCompose = false
+    }
+    this.setState({compose: switchCompose})
+    return switchCompose
+  }
+
+  showHideCompose(){
+    if(this.state.compose === true){
+      return <Compose postMessage={(e,t)=>this.postMessage(e,this)}/>
+    }
+  }
+
+  async postMessage(event){
+    event.preventDefault()
+    let newData = this.state.data
+    let payload = {
+      "subject": event.target.subject.value,
+      "body": event.target.body.value
+    }
+
+    const response = await fetch(url,{
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    this.getMessages()
+    this.toggleCompose()
+  }
+
+  async deleteMessage(){
+    let selections = this.state.selected
+    let payload = {
+      "messageIds": selections,
+      "command": "delete"
+    }
+
+    const response = await fetch(url,{
+      method:'PATCH',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    this.getMessages()
   }
 
   render() {
     return (
       <div>
-        <Compose />
+        {this.showHideCompose()}
         <Toolbar
           data={this.state.data}
           selected={this.state.selected}
+          compose={this.state.compose}
           selectAll={() => this.selectAll(this)}
           deselectAll={() => this.deselectAll(this)}
           markRead={() => this.markRead(this)}
           markUnread={() => this.markUnread(this)}
           applyLabel={(x,i) => this.applyLabel(x,this)}
           removeLabel={(x,i) => this.removeLabel(x,this)}
+          toggleCompose={() => this.toggleCompose()}
+          deleteMessage={() => this.deleteMessage()}
         />
         <Messages
           data={this.state.data}

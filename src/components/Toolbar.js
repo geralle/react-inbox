@@ -21,6 +21,14 @@ class Toolbar extends Component {
     }
   }
 
+  toggleComposeButton(){
+    if(this.props.compose === false){
+      return <i className="fa fa-plus"></i>
+    }else if(this.props.compose === true){
+      return <i className="fa fa-minus"></i>
+    }
+  }
+
   render() {
     return (
       <div className="row toolbar">
@@ -30,8 +38,8 @@ class Toolbar extends Component {
             unread messages
           </p>
 
-          <a className="btn btn-danger">
-            <i className="fa fa-plus"></i>
+          <a className="btn btn-danger" onClick={()=>this.props.toggleCompose()}>
+            {this.toggleComposeButton()}
           </a>
 
           <button className="btn btn-default">
@@ -56,7 +64,7 @@ class Toolbar extends Component {
             <option value="gschool">gschool</option>
           </select>
 
-          <button className="btn btn-default">
+          <button className="btn btn-default" onClick={()=>this.props.deleteMessage()}>
             <i className="fa fa-trash-o"></i>
           </button>
         </div>
